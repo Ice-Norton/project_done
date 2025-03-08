@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Job Confirmation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a7fa0;
+            --secondary-color: #035a76;
+            --accent-color: #2babc9;
+            --text-color: #ffffff;
+            --form-bg-color: rgba(255, 255, 255, 0.1);
+            --form-border-color: rgba(255, 255, 255, 0.2);
+            --error-color: #ff4757;
+            --danger-color: #dc3545;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .grid-background {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                             linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+        }
+        
+        .dots {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .dot {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+        }
+        
+        .navbar {
+            background-color: rgba(0, 48, 73, 0.3);
+            backdrop-filter: blur(5px);
+        }
+        
+        .navbar-brand img {
+            height: 40px;
+        }
+        
+        .logo-placeholder {
+            width: 40px;
+            height: 40px;
+            background-color: var(--accent-color);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .heading {
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            padding: 0 1rem;
+        }
+        
+        .subheading {
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 0 1rem;
+        }
+        
+        .confirmation-container {
+            background-color: var(--form-bg-color);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            border: 1px solid var(--form-border-color);
+            padding: 2rem;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        
+        .job-details {
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+        
+        .job-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .job-meta {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        
+        .job-meta-item {
+            margin-right: 1.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .job-meta-item i {
+            margin-right: 0.5rem;
+            width: 16px;
+        }
+        
+        .warning-icon {
+            font-size: 3.5rem;
+            color: var(--danger-color);
+            margin-bottom: 1.5rem;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .wave-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+            z-index: -1;
+        }
+
+        .wave-container svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 150px;
+        }
+
+        .wave-container .shape-fill {
+            fill: rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer {
+            background-color: rgba(0, 48, 73, 0.3);
+            backdrop-filter: blur(5px);
+            color: white;
+            padding: 1rem 0;
+            margin-top: 3rem;
+        }
+        
+        @media (max-width: 768px) {
+            .btn-container {
+                flex-direction: column;
+            }
+            
+            .btn-container button {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+            
+            .job-meta {
+                flex-direction: column;
+            }
+            
+            .job-meta-item {
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Grid Background -->
+    <div class="grid-background"></div>
+    
+    <!-- Random Dots -->
+    <div class="dots" id="dots"></div>
+    
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <div class="d-flex align-items-center">
+                    {% if logo_exists %}
+                    <img src="{% static 'img/logo.png' %}" alt="RecruitPro Logo" class="me-2">
+                    {% else %}
+                    <div class="logo-placeholder">RP</div>
+                    {% endif %}
+                    <span class="ms-1">RecruitPro</span>
+                </div>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'hirer_dashboard' %}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'hirer_jobs' %}">My Jobs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{job.get_absolute_url}}">Applications</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'hirer_profile' %}">Profile</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="container mt-5">
+        <h1 class="heading">Delete Job Confirmation</h1>
+        <p class="subheading">Are you sure you want to delete this job posting? This action cannot be undone.</p>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="confirmation-container">
+                    <div class="warning-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    
+                    <h2>Warning!</h2>
+                    <p>You are about to permanently delete the following job:</p>
+                    
+                    <div class="job-details">
+                        <h3 class="job-title">{{ job.title }}</h3>
+                        
+                        <div class="job-meta">
+                            <div class="job-meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>{{ job.location }}</span>
+                            </div>
+                            <div class="job-meta-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Posted: {{ job.created_at|date:"M d, Y" }}</span>
+                            </div>
+                            {% if job.applications.count > 0 %}
+                            <div class="job-meta-item">
+                                <i class="fas fa-users"></i>
+                                <span>{{ job.applications.count }} Applications</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        {% if job.applications.count > 0 %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            <strong>Note:</strong> This job has {{ job.applications.count }} applications. Deleting this job will also remove all associated application data.
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="btn-container">
+                            <a href="{% url 'hirer_jobs' %}" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash-alt me-2"></i> Yes, Delete Job
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Wave Background -->
+    <div class="wave-container">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2025 VisionTech. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Generate random dots
+        document.addEventListener('DOMContentLoaded', function() {
+            const dotsContainer = document.getElementById('dots');
+            const numberOfDots = 30;
+            
+            for (let i = 0; i < numberOfDots; i++) {
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                
+                // Random size between 5px and 20px
+                const size = Math.random() * 15 + 5;
+                dot.style.width = `${size}px`;
+                dot.style.height = `${size}px`;
+                
+                // Random position
+                dot.style.left = `${Math.random() * 100}%`;
+                dot.style.top = `${Math.random() * 100}%`;
+                
+                // Random opacity
+                dot.style.opacity = (Math.random() * 0.5).toString();
+                
+                dotsContainer.appendChild(dot);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruitment System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a7fa0;
+            --secondary-color: #035a76;
+            --accent-color: #2babc9;
+            --text-color: #ffffff;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .grid-background {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                             linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+        }
+        
+        .dots {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .dot {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+        }
+        
+        .navbar {
+            background-color: rgba(0, 48, 73, 0.3);
+            backdrop-filter: blur(5px);
+        }
+        
+        .navbar-brand img {
+            height: 40px;
+        }
+        
+        .navbar-toggler {
+            border: none;
+            color: white;
+        }
+        
+        .heading {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 2rem;
+            padding: 0 1rem;
+        }
+        
+        .subheading {
+            font-size: 1.2rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 0 1rem;
+        }
+        
+        .feature-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            height: 100%;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-desc {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-color);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline-light {
+            border: 2px solid white;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-light:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .wave-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+            z-index: -1;
+        }
+
+        .wave-container svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 150px;
+        }
+
+        .wave-container .shape-fill {
+            fill: rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer {
+            background-color: rgba(0, 48, 73, 0.3);
+            backdrop-filter: blur(5px);
+            color: white;
+            padding: 1rem 0;
+            margin-top: 3rem;
+        }
+        
+        @media (max-width: 768px) {
+            .heading {
+                font-size: 2rem;
+            }
+            
+            .subheading {
+                font-size: 1rem;
+            }
+            
+            .feature-card {
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--accent-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            z-index: 99;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0.8;
+        }
+        
+        .back-to-top:hover {
+            opacity: 1;
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Grid Background -->
+    <div class="grid-background"></div>
+    
+    <!-- Random Dots -->
+    <div class="dots" id="dots"></div>
+    
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static 'recruitment_system/image/IMG-20250128-WA0038 (2).jpg' %}" alt="Logo">
+                <span class="ms-2">VisionTech</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <div class="container mt-5">
+        <h1 class="heading">Streamlined Recruitment Management System</h1>
+        <p class="subheading">Connect with top talent or find your dream job with our powerful recruitment platform</p>
+        
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3 class="feature-title">For Hirers</h3>
+                    <p class="feature-desc">Post jobs, manage applications, and find the perfect candidate for your company.</p>
+                    <a href="{% url 'register_hirer' %}" class="btn btn-primary">Register as Hirer</a>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h3 class="feature-title">For Candidates</h3>
+                    <p class="feature-desc">Discover job opportunities and apply to positions that match your skills and interests.</p>
+                    <a href="{% url 'register_candidate' %}" class="btn btn-primary">Register as Candidate</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                    <h3 class="feature-title">Job Management</h3>
+                    <p class="feature-desc">Easily create, update, and manage job listings with our intuitive interface.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="feature-title">Application Tracking</h3>
+                    <p class="feature-desc">Track the status of all your applications in one centralized dashboard.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3 class="feature-title">Notifications</h3>
+                    <p class="feature-desc">Stay updated with real-time notifications about application status changes.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Call to Action -->
+    <div class="container text-center my-5">
+        <h2>Ready to get started?</h2>
+        <p class="mb-4">Join our platform today and revolutionize your recruitment process</p>
+        <a href="{% url 'login' %}" class="btn btn-outline-light me-3">Login</a>
+        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">Register Now</a>
+    </div>
+    
+    <!-- Register Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Choose Registration Type</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-grid gap-3">
+                        <a href="{% url 'register_hirer' %}" class="btn btn-outline-light">Register as Hirer</a>
+                        <a href="{% url 'register_candidate' %}" class="btn btn-outline-light">Register as Candidate</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Wave Background -->
+    <div class="wave-container">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
+    </div>
+    
+    <!-- Back to Top Button -->
+    <div class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2025 VisionTech. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Generate random dots
+        document.addEventListener('DOMContentLoaded', function() {
+            const dotsContainer = document.getElementById('dots');
+            const numberOfDots = 30;
+            
+            for (let i = 0; i < numberOfDots; i++) {
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                
+                // Random size between 5px and 20px
+                const size = Math.random() * 15 + 5;
+                dot.style.width = `${size}px`;
+                dot.style.height = `${size}px`;
+                
+                // Random position
+                dot.style.left = `${Math.random() * 100}%`;
+                dot.style.top = `${Math.random() * 100}%`;
+                
+                // Random opacity
+                dot.style.opacity = (Math.random() * 0.5).toString();
+                
+                dotsContainer.appendChild(dot);
+            }
+            
+            // Back to top button
+            const backToTop = document.querySelector('.back-to-top');
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTop.style.display = 'flex';
+                } else {
+                    backToTop.style.display = 'none';
+                }
+            });
+            
+            backToTop.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

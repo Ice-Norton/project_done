@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Listings - Recruitment System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a7fa0;
+            --secondary-color: #035a76;
+            --accent-color: #2babc9;
+            --text-color: #ffffff;
+            --card-bg-color: rgba(255, 255, 255, 0.1);
+            --card-border-color: rgba(255, 255, 255, 0.2);
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .grid-background {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                             linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+        }
+
+        .dots {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .dot {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+        }
+
+        .navbar {
+            background-color: rgba(0, 48, 73, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .navbar-brand img {
+            height: 40px;
+        }
+
+        .navbar-toggler {
+            border: none;
+            color: white;
+        }
+
+        .logo-placeholder {
+            width: 40px;
+            height: 40px;
+            background-color: var(--accent-color);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .heading {
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            padding: 0 1rem;
+        }
+
+        .subheading {
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 0 1rem;
+        }
+
+        .job-card {
+            background-color: var(--card-bg-color);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border-color);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .job-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .company-name {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1rem;
+        }
+
+        .badge {
+            padding: 0.35rem 0.65rem;
+            font-weight: normal;
+        }
+
+        .badge-open {
+            background-color: rgba(40, 167, 69, 0.2);
+            color: var(--success-color);
+        }
+
+        .badge-closed {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: var(--danger-color);
+        }
+
+        .badge-draft {
+            background-color: rgba(255, 193, 7, 0.2);
+            color: var(--warning-color);
+        }
+
+        .job-details {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .job-detail {
+            margin-right: 1.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .job-detail i {
+            margin-right: 0.5rem;
+            width: 16px;
+        }
+
+        .job-description {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+
+        .job-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            border: none;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-light {
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-right: 0.5rem;
+        }
+
+        .btn-outline-light:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .filters-container {
+            background-color: var(--card-bg-color);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border-color);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-group {
+            flex-grow: 1;
+            min-width: 200px;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-control, .form-select {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: var(--accent-color);
+            color: white;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .form-select option {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .search-container {
+            position: relative;
+            flex-grow: 2;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-input {
+            padding-left: 2.5rem;
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .pagination {
+            background-color: var(--card-bg-color);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            padding: 0.5rem;
+        }
+
+        .page-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50% !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 0.25rem;
+            border: none;
+            background-color: transparent;
+            color: white;
+        }
+
+        .page-link:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .page-item.active .page-link {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .page-item.disabled .page-link {
+            color: rgba(255, 255, 255, 0.4);
+            background-color: transparent;
+        }
+
+        .empty-state {
+            background-color: var(--card-bg-color);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border-color);
+            border-radius: 10px;
+            padding: 3rem 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            color: rgba(255, 255, 255, 0.3);
+            margin-bottom: 1.5rem;
+        }
+
+        .wave-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+            z-index: -1;
+        }
+
+        .wave-container svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 150px;
+        }
+
+        .wave-container .shape-fill {
+            fill: rgba(255, 255, 255, 0.1);
+        }
+
+        .footer {
+            background-color: rgba(0, 48, 73, 0.3);
+            backdrop-filter: blur(5px);
+            color: white;
+            padding: 1rem 0;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .heading {
+                font-size: 1.8rem;
+            }
+
+            .subheading {
+                font-size: 1rem;
+            }
+
+            .job-header {
+                flex-direction: column;
+            }
+
+            .job-actions {
+                margin-top: 1rem;
+                justify-content: flex-start;
+            }
+
+            .filter-row {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Grid Background -->
+    <div class="grid-background"></div>
+
+    <!-- Random Dots -->
+    <div class="dots" id="dots"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <div class="d-flex align-items-center">
+                    {% if logo_exists %}
+                    <img src="{% static 'img/logo.png' %}" alt="RecruitPro Logo" class="me-2">
+                    {% else %}
+                    <div class="logo-placeholder">RP</div>
+                    {% endif %}
+                    <span class="ms-1">VisionTech</span>
+                </div>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'job_list' %}">Jobs</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                        {% if user.user_type == 'candidate' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'candidate_dashboard' %}">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'candidate_applications' %}">My Applications</a>
+                        </li>
+                        {% elif user.user_type == 'hirer' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'hirer_dashboard' %}">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'hirer_jobs' %}">My Jobs</a>
+                        </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register_candidate' %}">Register</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <h1 class="heading">Find Your Dream Job</h1>
+        <p class="subheading">Browse through our open positions and take the next step in your career</p>
+
+        <!-- Filters -->
+        <div class="filters-container">
+            <form method="get" action="{% url 'job_list' %}">
+                <div class="filter-row">
+                    <div class="filter-group search-container">
+                        <label for="search" class="filter-label">Search</label>
+                        <div class="position-relative">
+                            <span class="search-icon">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control search-input" id="search" name="q" placeholder="Search by job title, skills, or keywords..." value="{{ search_query }}">
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="location" class="filter-label">Location</label>
+                        <input type="text" class="form-control" id="location" name="location" placeholder="City, state, or remote" value="{{ location_filter }}">
+                    </div>
+                </div>
+
+
+
+                    <div class="filter-group">
+                        <label for="sort" class="filter-label">Sort By</label>
+                        <select class="form-select" id="sort" name="sort">
+                            <option value="newest" {% if sort_by == 'newest' or not sort_by %}selected{% endif %}>Newest First</option>
+                            <option value="oldest" {% if sort_by == 'oldest' %}selected{% endif %}>Oldest First</option>
+                            <option value="salary_high" {% if sort_by == 'salary_high' %}selected{% endif %}>Salary (High to Low)</option>
+                            <option value="salary_low" {% if sort_by == 'salary_low' %}selected{% endif %}>Salary (Low to High)</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-filter me-2"></i> Apply Filters
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Job Listings -->
+        {% if jobs %}
+            <div class="job-listings">
+                {% for job in jobs %}
+                <div class="job-card">
+                    <div class="job-header">
+                        <div>
+                            <h2 class="job-title">{{ job.title }}</h2>
+                            <p class="company-name">{{ job.hirer.hirer_profile.company_name }}</p>
+                        </div>
+                        {% if job.status %}
+                        <span class="badge badge-open">{{ job.status|title }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="job-details">
+                        <div class="job-detail">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ job.location }}</span>
+                        </div>
+
+                        {% if job.job_type %}
+                        <div class="job-detail">
+                            <i class="fas fa-briefcase"></i>
+                            <span>{{ job.get_job_type_display }}</span>
+                        </div>
+                        {% endif %}
+
+                        {% if job.salary_min or job.salary_max %}
+                        <div class="job-detail">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span>
+                                {% if job.salary_min and job.salary_max %}
+                                    ${{ job.salary_min|floatformat:0 }} - ${{ job.salary_max|floatformat:0 }}
+                                {% elif job.salary_min %}
+                                    From ${{ job.salary_min|floatformat:0 }}
+                                {% elif job.salary_max %}
+                                    Up to ${{ job.salary_max|floatformat:0 }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        {% endif %}
+
+                        <div class="job-detail">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Posted {{ job.created_at|date:"M d, Y" }}</span>
+                        </div>
+
+
+                    </div>
+
+                    <div class="job-description">
+                        {{ job.description|truncatewords:30 }}
+                    </div>
+
+                    <div class="job-actions">
+                        {% if user.is_authenticated and user.user_type == 'candidate' %}
+
+
+
+                            {% if job.id in applied_jobs %}
+                            <button class="btn btn-outline-light" disabled>
+                                <i class="fas fa-check-circle"></i> Applied
+                            </button>
+                            {% else %}
+                            <a href="{% url 'apply_for_job' job.id %}" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Apply Now
+                            </a>
+                            {% endif %}
+                        {% else %}
+                            <a href="{% url 'login' %}?next={% url 'apply_job' job.id %}" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Apply Now
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if jobs.has_other_pages %}
+            <div class="pagination-container">
+                <ul class="pagination">
+                    {% if jobs.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% if search_query %}&q={{ search_query }}{% endif %}{% if location_filter %}&location={{ location_filter }}{% endif %}{% if job_type_filter %}&job_type={{ job_type_filter }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}" aria-label="First">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ jobs.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if location_filter %}&location={{ location_filter }}{% endif %}{% if job_type_filter %}&job_type={{ job_type_filter }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}" aria-label="Previous">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" aria-label="First">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in jobs.paginator.page_range %}
+                        {% if jobs.number == num %}
+                            <li class="page-item active">
+                                <a class="page-link" href="#">{{ num }}</a>
+                            </li>
+                        {% elif num > jobs.number|add:'-3' and num < jobs.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% if search_query %}&q={{ search_query }}{% endif %}{% if location_filter %}&location={{ location_filter }}{% endif %}{% if job_type_filter %}&job_type={{ job_type_filter }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if jobs.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ jobs.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if location_filter %}&location={{ location_filter }}{% endif %}{% if job_type_filter %}&job_type={{ job_type_filter }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}" aria-label="Next">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ jobs.paginator.num_pages }}{% if search_query %}&q={{ search_query }}{% endif %}{% if location_filter %}&location={{ location_filter }}{% endif %}{% if job_type_filter %}&job_type={{ job_type_filter }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}" aria-label="Last">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" aria-label="Last">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+            {% endif %}
+
+        {% else %}
+            <!-- Empty State -->
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h2>No Jobs Found</h2>
+                <p class="mb-4">
+                    {% if search_query or location_filter or job_type_filter %}
+                    We couldn't find any jobs matching your criteria. Try adjusting your filters or search terms.
+                    {% else %}
+                    There are no job listings available at the moment. Please check back later.
+                    {% endif %}
+                </p>
+                <a href="{% url 'job_list' %}" class="btn btn-primary">
+                    <i class="fas fa-sync-alt me-2"></i> Reset Filters
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Wave Background -->
+    <div class="wave-container">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2025 VisionTech. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Generate random dots
+        document.addEventListener('DOMContentLoaded', function() {
+            const dotsContainer = document.getElementById('dots');
+            const numberOfDots = 30;
+
+            for (let i = 0; i < numberOfDots; i++) {
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+
+                // Random size between 5px and 20px
+                const size = Math.random() * 15 + 5;
+                dot.style.width = `${size}px`;
+                dot.style.height = `${size}px`;
+
+                // Random position
+                dot.style.left = `${Math.random() * 100}%`;
+                dot.style.top = `${Math.random() * 100}%`;
+
+                // Random opacity
+                dot.style.opacity = (Math.random() * 0.5).toString();
+
+                dotsContainer.appendChild(dot);
+            }
+        });
+    </script>
+</body>
+</html>
