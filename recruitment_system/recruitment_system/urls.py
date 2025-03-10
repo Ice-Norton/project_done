@@ -8,4 +8,5 @@ urlpatterns = [
     path('', include('accounts.urls')),
     path('jobs/', include('jobs.urls')),
 ]
-
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
