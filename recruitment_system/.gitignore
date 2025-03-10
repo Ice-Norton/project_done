@@ -21,7 +21,6 @@ ENV/
 *.log
 *.pot
 *.pyc
-
 media/
 
 # Static files
