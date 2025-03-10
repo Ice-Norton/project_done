@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Dashboard - Recruitment System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a7fa0;
+            --secondary-color: #035a76;
+            --accent-color: #2babc9;
+            --text-color: #ffffff;
+            --sidebar-bg-color: rgba(0, 48, 73, 0.7);
+            --card-bg-color: rgba(255, 255, 255, 0.1);
+            --card-border-color: rgba(255, 255, 255, 0.2);
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .grid-background {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                             linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+        }
+        
+        .dots {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .dot {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+        }
+        
+        .navbar {
+            background-color: rgba(0, 48, 73, 0.8);
+            backdrop-filter: blur(5px);
+            padding: 0.5rem 1rem;
+            z-index: 1030;
+        }
+        
+        .navbar-brand img {
+            height: 40px;
+        }
+        
+        .logo-placeholder {
+            width: 40px;
+            height: 40px;
+            background-color: var(--accent-color);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 56px;
+            height: calc(100vh - 56px);
+            width: 250px;
+            background-color: var(--sidebar-bg-color);
+            backdrop-filter: blur(10px);
+            padding-top: 1rem;
+            z-index: 1020;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu .menu-header {
+            color: rgba(255, 255, 255, 0.6);
+            padding: 0.75rem 1.5rem 0.5rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 1rem;
+        }
+        
+        .sidebar-menu .menu-item {
+            margin-bottom: 0.25rem;
+        }
+        
+        .sidebar-menu .menu-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .sidebar-menu .menu-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .sidebar-menu .menu-link.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: white;
+            border-left: 3px solid var(--accent-color);
+        }
+        
+        .sidebar-menu .menu-icon {
+            margin-right: 0.75rem;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+            min-height: calc(100vh - 56px - 72px);
+            transition: all 0.3s ease;
+        }
+        
+        .footer {
+            background-color: rgba(0, 48, 73, 0.8);
+            backdrop-filter: blur(5px);
+            color: white;
+            padding: 1rem 0;
+            margin-top: auto;
+            position: relative;
+            z-index: 10;
+            margin-left: 250px;
+            transition: all 0.3s ease;
+        }
+        
+        .card {
+            background-color: var(--card-bg-color);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border-color);
+            border-radius: 10px;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-title i {
+            margin-right: 0.75rem;
+            color: var(--accent-color);
+        }
+        
+        .stat-card {
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            padding: 1rem;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .stat-count {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0;
+        }
+        
+        .job-item {
+            padding: 1.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .job-item:last-child {
+            border-bottom: none;
+        }
+        
+        .job-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+        
+        .job-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .company-name {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .job-details {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 0.75rem;
+        }
+        
+        .job-detail {
+            margin-right: 1.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .job-detail i {
+            margin-right: 0.4rem;
+            font-size: 0.9rem;
+            width: 16px;
+            text-align: center;
+        }
+        
+        .job-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.75rem;
+        }
+        
+        .badge {
+            padding: 0.35rem 0.65rem;
+            font-weight: normal;
+        }
+        
+        .badge-open {
+            background-color: rgba(40, 167, 69, 0.2);
+            color: var(--success-color);
+        }
+        
+        .badge-applied {
+            background-color: rgba(23, 162, 184, 0.2);
+            color: var(--info-color);
+        }
+        
+        .badge-closed {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: var(--danger-color);
+        }
+        
+        .badge-pending {
+            background-color: rgba(255, 193, 7, 0.2);
+            color: var(--warning-color);
+        }
+        
+        .badge-accepted {
+            background-color: rgba(40, 167, 69, 0.2);
+            color: var(--success-color);
+        }
+        
+        .badge-rejected {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: var(--danger-color);
+        }
+        
+        .application-status {
+            flex-shrink: 0;
+        }
+        
+        .btn-primary, .btn-outline-primary {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+        
+        .btn-primary:hover, .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-outline-primary {
+            color: var(--accent-color);
+            background-color: transparent;
+        }
+        
+        .btn-outline-primary:hover {
+            color: white;
+        }
+        
+        .btn-sm {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.85rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+        
+        .progress-card {
+            padding: 1.5rem;
+        }
+        
+        .progress-title {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .progress {
+            height: 0.8rem;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .progress-bar {
+            background-color: var(--accent-color);
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .recent-activity {
+            padding: 1.5rem;
+        }
+        
+        .activity-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        
+        .activity-icon {
+            margin-right: 1rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--accent-color);
+            flex-shrink: 0;
+        }
+        
+        .activity-details {
+            flex-grow: 1;
+        }
+        
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .activity-time {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .toggle-sidebar-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+        }
+        
+        .user-dropdown .dropdown-toggle::after {
+            display: none;
+        }
+        
+        .user-dropdown .dropdown-menu {
+            background-color: rgba(0, 48, 73, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-width: 200px;
+            padding: 0;
+        }
+        
+        .dropdown-user-info {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .dropdown-user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.2);
+            margin: 0 auto 0.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .dropdown-user-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .dropdown-user-email {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0;
+            word-break: break-all;
+        }
+        
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.2s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown-item:hover, .dropdown-item:focus {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .dropdown-item i {
+            margin-right: 0.75rem;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .notifications-dropdown .dropdown-menu {
+            width: 320px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .notification-item {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .notification-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+        
+        .notification-icon {
+            margin-right: 0.75rem;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--accent-color);
+            flex-shrink: 0;
+        }
+        
+        .notification-content {
+            flex-grow: 1;
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+        
+        .notification-text {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.25rem;
+        }
+        
+        .notification-time {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: 5px;
+            right: 2px;
+            width: 18px;
+            height: 18px;
+            background-color: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .see-all-link {
+            display: block;
+            text-align: center;
+            padding: 0.75rem;
+            color: var(--accent-color);
+            font-weight: 600;
+            text-decoration: none;
+            background-color: rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
+        }
+        
+        .see-all-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--accent-color);
+        }
+        
+        .profile-completion {
+            padding: 1.5rem;
+        }
+        
+        .completion-items {
+            margin-top: 1rem;
+        }
+        
+        .completion-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        
+        .completion-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .completion-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+        }
+        
+        .completion-icon.complete {
+            background-color: rgba(40, 167, 69, 0.2);
+            color: var(--success-color);
+        }
+        
+        .completion-icon.incomplete {
+            background-color: rgba(255, 193, 7, 0.2);
+            color: var(--warning-color);
+        }
+        
+        .completion-text {
+            font-size: 0.9rem;
+        }
+        
+        .saved-job-list {
+            padding: 0.75rem;
+        }
+        
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+                box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+            }
+            
+            .main-content, .footer {
+                margin-left: 0;
+            }
+            
+            .toggle-sidebar-btn {
+                display: block;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .stat-count {
+                font-size: 2rem;
+            }
+            
+            .stat-icon {
+                font-size: 1.5rem;
+                padding: 0.75rem;
+            }
+            
+            .notifications-dropdown .dropdown-menu {
+                width: 280px;
+            }
+            
+            .job-header {
+                flex-direction: column;
+            }
+            
+            .job-actions {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .job-actions .btn {
+                margin-top: 0.5rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 1.5rem 1rem;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .section-header .btn {
+                margin-top: 1rem;
+                align-self: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Grid Background -->
+    <div class="grid-background"></div>
+    
+    <!-- Random Dots -->
+    <div class="dots" id="dots"></div>
+    
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container-fluid">
+            <button class="toggle-sidebar-btn me-2" id="toggleSidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <div class="d-flex align-items-center">
+                    {% if logo_exists %}
+                    <img src="{% static 'recruitment_system/static/img/IMG-20250128-WA0038 (2).jpg' %}" alt="RecruitPro Logo" class="me-2">
+                    {% else %}
+                    <div class="logo-placeholder">RP</div>
+                    {% endif %}
+                    <span class="ms-1 d-none d-sm-inline">VisionTech</span>
+                </div>
+            </a>
+            
+            <div class="ms-auto d-flex align-items-center">
+                <!-- Notifications Dropdown -->
+                <div class="dropdown notifications-dropdown me-3">
+                    <a class="nav-link text-white position-relative" href="#" role="button" id="notificationsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">2</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+                        <h6 class="dropdown-header">Notifications</h6>
+                        
+                        <div class="notification-item d-flex align-items-start">
+                            <div class="notification-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="notification-content">
+                                <p class="notification-title">Application Status Update</p>
+                                <p class="notification-text">Your application for "UI/UX Designer" has been accepted</p>
+                                <p class="notification-time">2 hours ago</p>
+                            </div>
+                        </div>
+                        
+                        <div class="notification-item d-flex align-items-start">
+                            <div class="notification-icon">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <div class="notification-content">
+                                <p class="notification-title">New Job Match</p>
+                                <p class="notification-text">A new job matching your skills has been posted</p>
+                                <p class="notification-time">Yesterday</p>
+                            </div>
+                        </div>
+                        
+                        <a href="#" class="see-all-link">See All Notifications</a>
+                    </div>
+                </div>
+                
+                <!-- User Dropdown -->
+                <div class="dropdown user-dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="d-none d-lg-inline me-2">{{ user.username }}</span>
+                        <div class="logo-placeholder" style="width: 30px; height: 30px; margin: 0;">
+                            {{ user.username.0|upper }}
+                        </div>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <div class="dropdown-user-info">
+                            <div class="dropdown-user-avatar">
+                                {{ user.username.0|upper }}
+                            </div>
+                            <h6 class="dropdown-user-name">{{ user.candidate_profile.first_name }} {{ user.candidate_profile.last_name }}</h6>
+                            <p class="dropdown-user-email">{{ user.email }}</p>
+                        </div>
+                        <a class="dropdown-item" href="#Profile">
+                            <i class="fas fa-user"></i> My Profile
+                        </a>
+                        <a class="dropdown-item" href="{% url 'candidate_applications' %}">
+                            <i class="fas fa-file-alt"></i> My Applications
+                        </a>
+                        <a class="dropdown-item" href="#Saved">
+                            <i class="fas fa-bookmark"></i> Saved Jobs
+                        </a>
+                        <a class="dropdown-item" href="#Settings">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'logout' %}">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a href="{% url 'candidate_dashboard' %}" class="menu-link active">
+                    <span class="menu-icon"><i class="fas fa-tachometer-alt"></i></span>
+                    <span class="menu-text">Dashboard</span>
+                </a>
+            </li>
+            
+            <li class="menu-header">Jobs</li>
+            <li class="menu-item">
+                <a href="{% url 'job_list' %}" class="menu-link">
+                    <span class="menu-icon"><i class="fas fa-briefcase"></i></span>
+                    <span class="menu-text">Browse Jobs</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="{% url 'candidate_applications' %}" class="menu-link">
+                    <span class="menu-icon"><i class="fas fa-file-alt"></i></span>
+                    <span class="menu-text">My Applications</span>
+                </a>
+            </li>
+            
+            <li class="menu-header">Profile</li>
+            <li class="menu-item">
+                <a href="#Profile" class="menu-link">
+                    <span class="menu-icon"><i class="fas fa-user"></i></span>
+                    <span class="menu-text">My Profile</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#Settings" class="menu-link">
+                    <span class="menu-icon"><i class="fas fa-cog"></i></span>
+                    <span class="menu-text">Settings</span>
+                </a>
+            </li>
+            
+            <li class="menu-header">Support</li>
+            <li class="menu-item">
+                <a href="#Help" class="menu-link">
+                    <span class="menu-icon"><i class="fas fa-question-circle"></i></span>
+                    <span class="menu-text">Help & Support</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="{% url 'logout' %}" class="menu-link">
+                    <span class="menu-icon"><i class="fas fa-sign-out-alt"></i></span>
+                    <span class="menu-text">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Dashboard Overview -->
+        <div class="section-header">
+            <h1 class="page-title">Dashboard</h1>
+            <a href="{% url 'job_list' %}" class="btn btn-primary">
+                <i class="fas fa-search me-1"></i> Find Jobs
+            </a>
+        </div>
+        
+        <!-- Stats Row -->
+        <div class="row g-4 mb-4">
+            <div class="col-xl-3 col-md-6">
+                <div class="card stat-card">
+                    <div class="stat-icon" style="color: var(--accent-color);">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3 class="stat-count">{{ total_applications_count }}</h3>
+                    <p class="stat-label">Total Applications</p>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-md-6">
+                <div class="card stat-card">
+                    <div class="stat-icon" style="color: var(--warning-color);">
+                        <i class="fas fa-hourglass-half"></i>
+                    </div>
+                    <h3 class="stat-count">{{ pending_applications_count }}</h3>
+                    <p class="stat-label">Pending</p>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-md-6">
+                <div class="card stat-card">
+                    <div class="stat-icon" style="color: var(--success-color);">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3 class="stat-count">{{ accepted_applications_count }}</h3>
+                    <p class="stat-label">Accepted</p>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-md-6">
+                <div class="card stat-card">
+                    <div class="stat-icon" style="color: var(--danger-color);">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <h3 class="stat-count">{{ rejected_applications_count }}</h3>
+                    <p class="stat-label">Rejected</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Profile Completion & Recent Applications Row -->
+        <div class="row g-4 mb-4">
+            <!-- Profile Completion -->
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-user-check"></i> Profile Completion
+                        </h5>
+                        
+                        <div class="profile-completion">
+                            <div class="progress-title">{{ profile_completion_percentage }}% Complete</div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: {{ profile_completion_percentage }}%" aria-valuenow="{{ profile_completion_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            
+                            <div class="progress-info">
+                                <span>{{ profile_completed_items }}/{{ profile_total_items }} Items completed</span>
+                                <a href="#Profile">Complete Profile</a>
+                            </div>
+                            
+                            <div class="completion-items">
+                                <div class="completion-item">
+                                    <div class="completion-icon {% if profile_has_resume %}complete{% else %}incomplete{% endif %}">
+                                        <i class="{% if profile_has_resume %}fas fa-check{% else %}fas fa-exclamation{% endif %}"></i>
+                                    </div>
+                                    <div class="completion-text">Resume</div>
+                                </div>
+                                
+                                <div class="completion-item">
+                                    <div class="completion-icon {% if profile_has_cv %}complete{% else %}incomplete{% endif %}">
+                                        <i class="{% if profile_has_cv %}fas fa-check{% else %}fas fa-exclamation{% endif %}"></i>
+                                    </div>
+                                    <div class="completion-text">CV Upload</div>
+                                </div>
+                                
+                                <div class="completion-item">
+                                    <div class="completion-icon {% if profile_has_personal_info %}complete{% else %}incomplete{% endif %}">
+                                        <i class="{% if profile_has_personal_info %}fas fa-check{% else %}fas fa-exclamation{% endif %}"></i>
+                                    </div>
+                                    <div class="completion-text">Personal Information</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Applications -->
+            <div class="col-lg-8">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="card-title">
+                                <i class="fas fa-file-alt"></i> Recent Applications
+                            </h5>
+                            <a href="{% url 'candidate_applications' %}" class="btn btn-sm btn-outline-light">View All</a>
+                        </div>
+                        
+                        {% if recent_applications %}
+                        <div class="application-list">
+                            {% for application in recent_applications %}
+                            <div class="job-item">
+                                <div class="job-header">
+                                    <div>
+                                        <h5 class="job-title">{{ application.job.title }}</h5>
+                                        <p class="company-name">{{ application.job.hirer.hirer_profile.company_name }}</p>
+                                    </div>
+                                    <div class="application-status">
+                                        <span class="badge {% if application.status == 'pending' %}badge-pending{% elif application.status == 'accepted' %}badge-accepted{% else %}badge-rejected{% endif %}">
+                                            {{ application.status|title }}
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div class="job-details">
+                                    <div class="job-detail">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>{{ application.job.location }}</span>
+                                    </div>
+                                    <div class="job-detail">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <span>Applied on {{ application.applied_at|date:"M d, Y" }}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="job-actions">
+                                    <div>
+                                        {% if application.status == 'accepted' %}
+                                        <div class="text-success small">
+                                            <i class="fas fa-check-circle me-1"></i> Congratulations! Your application was accepted.
+                                        </div>
+                                        {% elif application.status == 'rejected' %}
+                                        <div class="text-danger small">
+                                            <i class="fas fa-times-circle me-1"></i> Your application was not selected.
+                                        </div>
+                                        {% else %}
+                                        <div class="text-warning small">
+                                            <i class="fas fa-clock me-1"></i> Your application is being reviewed.
+                                        </div>
+                                        {% endif %}
+                                    </div>
+
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="text-center py-4">
+                            <p>You haven't applied for any jobs yet.</p>
+                            <a href="{% url 'job_list' %}" class="btn btn-primary mt-2">Browse Jobs</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recommended Jobs & Activity Row -->
+        <div class="row g-4">
+            <!-- Recommended Jobs -->
+            <div class="col-lg-8">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="card-title">
+                                <i class="fas fa-star"></i> Recommended Jobs
+                            </h5>
+                            <a href="{% url 'job_list' %}" class="btn btn-sm btn-outline-light">View All Jobs</a>
+                        </div>
+                        
+                        {% if recommended_jobs %}
+                        <div class="job-list">
+                            {% for job in recommended_jobs %}
+                            <div class="job-item">
+                                <div class="job-header">
+                                    <div>
+                                        <h5 class="job-title">{{ job.title }}</h5>
+                                        <p class="company-name">{{ job.hirer.hirer_profile.company_name }}</p>
+                                    </div>
+                                    <span class="badge badge-open">{{ job.status|title }}</span>
+                                </div>
+                                
+                                <div class="job-details">
+                                    <div class="job-detail">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>{{ job.location }}</span>
+                                    </div>
+                                    <div class="job-detail">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <span>Posted {{ job.created_at|date:"M d, Y" }}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="job-actions">
+                                    <div>
+                                        <span class="text-white-50 small">Matches your profile by 85%</span>
+                                    </div>
+                                    <div>
+
+                                        <a href="{% url 'candidate_application' job.id %}" class="btn btn-sm btn-primary">Apply Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="text-center py-4">
+                            <p>No recommended jobs available at the moment.</p>
+                            <a href="{% url 'job_list' %}" class="btn btn-primary mt-2">Browse All Jobs</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-chart-line"></i> Recent Activity
+                        </h5>
+                        
+                        <div class="recent-activity">
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-paper-plane"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <h6 class="activity-title">Application Submitted</h6>
+                                    <p>You applied for "UI/UX Designer" position at TechCorp.</p>
+                                    <span class="activity-time">Today, 2:15 PM</span>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-bookmark"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <h6 class="activity-title">Job Saved</h6>
+                                    <p>You saved "Frontend Developer" position for later.</p>
+                                    <span class="activity-time">Yesterday, 10:30 AM</span>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-eye"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <h6 class="activity-title">Profile Viewed</h6>
+                                    <p>Your profile was viewed by InnovateTech Inc.</p>
+                                    <span class="activity-time">Jan 28, 2023</span>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-upload"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <h6 class="activity-title">CV Updated</h6>
+                                    <p>You updated your CV file.</p>
+                                    <span class="activity-time">Jan 25, 2023</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container-fluid text-center">
+            <p class="mb-0">&copy; 2025 VisionTech. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Generate random dots
+        document.addEventListener('DOMContentLoaded', function() {
+            const dotsContainer = document.getElementById('dots');
+            const numberOfDots = 30;
+            
+            for (let i = 0; i < numberOfDots; i++) {
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                
+                // Random size between 5px and 20px
+                const size = Math.random() * 15 + 5;
+                dot.style.width = `${size}px`;
+                dot.style.height = `${size}px`;
+                
+                // Random position
+                dot.style.left = `${Math.random() * 100}%`;
+                dot.style.top = `${Math.random() * 100}%`;
+                
+                // Random opacity
+                dot.style.opacity = (Math.random() * 0.5).toString();
+                
+                dotsContainer.appendChild(dot);
+            }
+            
+            // Toggle sidebar
+            const toggleBtn = document.getElementById('toggleSidebar');
+            const sidebar = document.getElementById('sidebar');
+            
+            toggleBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnToggleBtn = toggleBtn.contains(event.target);
+                
+                if (!isClickInsideSidebar && !isClickOnToggleBtn && sidebar.classList.contains('show')) {
+                    sidebar.classList.remove('show');
+                }
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth >= 992) {
+                    sidebar.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
