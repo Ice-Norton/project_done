@@ -3908,7 +3908,6 @@
   const CLASS_NAME_SHOW$5 = 'show';
   const EVENT_MOUSEDOWN = `mousedown.bs.${NAME$9}`;
   const Default$8 = {
-    className: 'modal-backdrop',
     clickCallback: null,
     isAnimated: false,
     isVisible: true,

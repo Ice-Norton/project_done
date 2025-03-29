@@ -689,14 +689,10 @@
             </button>
             
             <a class="navbar-brand" href="{% url 'home' %}">
-                <div class="d-flex align-items-center">
-                    {% if logo_exists %}
-                    <img src="{% static 'img/logo.png' %}" alt="RecruitPro Logo" class="me-2">
-                    {% else %}
-                    <div class="logo-placeholder">RP</div>
-                    {% endif %}
-                    <span class="ms-1 d-none d-sm-inline">RecruitPro</span>
-                </div>
+                 <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static 'image/logoVisionTech.jpg' %}" alt="LogoVisionTech">
+<!--                <span class="ms-2">VisionTech</span>-->
+            </a>
             </a>
             
             <div class="ms-auto d-flex align-items-center">
